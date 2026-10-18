@@ -1,0 +1,83 @@
+@model DashboardVm
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-bg-primary h-100"><div class="card-body">
+            <div class="small">Productos activos</div>
+            <div class="fs-3 fw-bold">@Model.TotalProductos</div>
+        </div></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-success h-100"><div class="card-body">
+            <div class="small">Ventas del mes</div>
+            <div class="fs-3 fw-bold">@Model.VentasMes.ToString("C")</div>
+        </div></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-bg-secondary h-100"><div class="card-body">
+            <div class="small">Compras del mes</div>
+            <div class="fs-3 fw-bold">@Model.ComprasMes.ToString("C")</div>
+        </div></div>
+    </div>
+    <div class="col-md-3">
+        <div class="card @(Model.TotalStockBajo > 0 ? "text-bg-danger" : "text-bg-light") h-100"><div class="card-body">
+            <div class="small">Productos con stock bajo</div>
+            <div class="fs-3 fw-bold">@Model.TotalStockBajo</div>
+        </div></div>
+    </div>
+</div>
+
+<p class="text-muted">Valor del inventario (a costo): <strong>@Model.ValorInventario.ToString("C")</strong></p>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header fw-semibold"> Alertas de inventario bajo</div>
+            <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Producto</th><th>Categoría</th><th class="text-end">Stock</th><th class="text-end">Mínimo</th></tr></thead>
+                    <tbody>
+                    @foreach (var p in Model.StockBajo)
+                    {
+                        <tr>
+                            <td>@p.Nombre</td>
+                            <td>@p.Categoria?.Nombre</td>
+                            <td class="text-end text-danger fw-bold">@p.StockActual</td>
+                            <td class="text-end">@p.StockMinimo</td>
+                        </tr>
+                    }
+                    @if (!Model.StockBajo.Any())
+                    {
+                        <tr><td colspan="4" class="text-center text-muted py-3">Todo el inventario está por encima del mínimo </td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header fw-semibold">Últimos movimientos</div>
+            <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Fecha</th><th>Producto</th><th>Tipo</th><th class="text-end">Cant.</th></tr></thead>
+                    <tbody>
+                    @foreach (var m in Model.UltimosMovimientos)
+                    {
+                        <tr>
+                            <td>@m.Fecha.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>@m.Producto?.Nombre</td>
+                            <td>@m.Tipo</td>
+                            <td class="text-end">@(m.Cantidad > 0 ? "+" + m.Cantidad : m.Cantidad.ToString())</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+@model IEnumerable<Factura>
+@{
+    ViewData["Title"] = "Facturas";
+}
+<h2 class="mb-3">Facturas</h2>
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead><tr><th>Número</th><th>Fecha</th><th>Cliente</th><th class="text-end">Subtotal</th><th class="text-end">IVA</th><th class="text-end">Total</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var f in Model)
+        {
+            <tr>
+                <td>@f.Numero</td>
+                <td>@f.Fecha.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@(f.Venta?.Cliente?.Nombre ?? "Cliente general")</td>
+                <td class="text-end">@f.Subtotal.ToString("C")</td>
+                <td class="text-end">@f.Impuesto.ToString("C")</td>
+                <td class="text-end fw-bold">@f.Total.ToString("C")</td>
+                <td class="text-end"><a asp-action="Details" asp-route-id="@f.Id" class="btn btn-sm btn-outline-primary">Ver / imprimir</a></td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="7" class="text-center text-muted py-4">Aún no hay facturas.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>

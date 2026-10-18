@@ -1,0 +1,29 @@
+@model IEnumerable<Categoria>
+@{
+    ViewData["Title"] = "Categorías";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Categorías</h2>
+    <a asp-action="Create" class="btn btn-primary">Nueva categoría</a>
+</div>
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead><tr><th>Nombre</th><th>Descripción</th><th class="text-end">Productos</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Nombre</td>
+                <td>@c.Descripcion</td>
+                <td class="text-end">@c.Productos.Count</td>
+                <td class="text-end">
+                    <a asp-action="Edit" asp-route-id="@c.Id" class="btn btn-sm btn-outline-primary">Editar</a>
+                    <form asp-action="Delete" asp-route-id="@c.Id" method="post" class="d-inline" onsubmit="return confirm('¿Eliminar esta categoría?');">
+                        <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

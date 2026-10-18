@@ -1,0 +1,30 @@
+@model IEnumerable<Compra>
+@{
+    ViewData["Title"] = "Compras";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Compras</h2>
+    <a asp-action="Create" class="btn btn-primary">Nueva compra</a>
+</div>
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead><tr><th>#</th><th>Fecha</th><th>Proveedor</th><th class="text-end">Total</th><th>Usuario</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td>@c.Id</td>
+                <td>@c.Fecha.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@c.Proveedor?.Nombre</td>
+                <td class="text-end">@c.Total.ToString("C")</td>
+                <td>@c.Usuario</td>
+                <td class="text-end"><a asp-action="Details" asp-route-id="@c.Id" class="btn btn-sm btn-outline-primary">Ver detalle</a></td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="6" class="text-center text-muted py-4">Aún no hay compras registradas.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>

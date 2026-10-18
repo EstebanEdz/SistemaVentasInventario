@@ -1,0 +1,76 @@
+@model IEnumerable<Producto>
+@{
+    ViewData["Title"] = "Productos";
+    var puedeEditar = User.IsInRole(Roles.Admin) || User.IsInRole(Roles.Almacenista);
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Productos</h2>
+    @if (puedeEditar)
+    {
+        <a asp-action="Create" class="btn btn-primary">Nuevo producto</a>
+    }
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input name="q" value="@ViewBag.Q" class="form-control" placeholder="Buscar por código o nombre" />
+    </div>
+    <div class="col-md-3">
+        <select name="categoriaId" asp-items="(SelectList)ViewBag.Categorias" class="form-select">
+            <option value="">Todas las categorías</option>
+        </select>
+    </div>
+    <div class="col-md-3 d-flex align-items-center">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="soloBajo" value="true" id="soloBajo" checked="@((bool)ViewBag.SoloBajo)" />
+            <label class="form-check-label" for="soloBajo">Solo stock bajo</label>
+        </div>
+    </div>
+    <div class="col-md-2"><button class="btn btn-outline-secondary w-100">Filtrar</button></div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Código</th><th>Nombre</th><th>Categoría</th><th>Proveedor</th>
+                <th class="text-end">P. compra</th><th class="text-end">P. venta</th>
+                <th class="text-end">Stock</th><th class="text-end">Mínimo</th><th>Estado</th><th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var p in Model)
+        {
+            <tr class="@(p.Activo && p.StockBajo ? "table-warning" : "")">
+                <td>@p.Codigo</td>
+                <td>@p.Nombre</td>
+                <td>@p.Categoria?.Nombre</td>
+                <td>@p.Proveedor?.Nombre</td>
+                <td class="text-end">@p.PrecioCompra.ToString("C")</td>
+                <td class="text-end">@p.PrecioVenta.ToString("C")</td>
+                <td class="text-end fw-bold @(p.StockBajo ? "text-danger" : "")">@p.StockActual</td>
+                <td class="text-end">@p.StockMinimo</td>
+                <td>
+                    @if (!p.Activo) { <span class="badge bg-secondary">Inactivo</span> }
+                    else if (p.StockBajo) { <span class="badge bg-danger">Stock bajo</span> }
+                    else { <span class="badge bg-success">OK</span> }
+                </td>
+                <td class="text-end text-nowrap">
+                    @if (puedeEditar)
+                    {
+                        <a asp-action="Edit" asp-route-id="@p.Id" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a asp-action="Ajustar" asp-route-id="@p.Id" class="btn btn-sm btn-outline-secondary">Ajustar stock</a>
+                        <form asp-action="CambiarEstado" asp-route-id="@p.Id" method="post" class="d-inline">
+                            <button class="btn btn-sm btn-outline-dark">@(p.Activo ? "Desactivar" : "Activar")</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        @if (!Model.Any())
+        {
+            <tr><td colspan="10" class="text-center text-muted py-4">No hay productos para mostrar.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>

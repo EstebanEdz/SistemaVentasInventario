@@ -1,0 +1,16 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.vscode/
+.idea/
+*.log
+TestResults/
+## Secretos locales
+appsettings.Local.json
+secrets.json
+## SO
+.DS_Store
+Thumbs.db

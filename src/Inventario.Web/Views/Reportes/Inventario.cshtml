@@ -1,0 +1,37 @@
+@model List<Producto>
+@{
+    ViewData["Title"] = "Inventario valorizado";
+    var valorCosto = Model.Where(p => p.Activo).Sum(p => p.StockActual * p.PrecioCompra);
+    var valorVenta = Model.Where(p => p.Activo).Sum(p => p.StockActual * p.PrecioVenta);
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Inventario valorizado</h2>
+    <a asp-action="ExportarInventario" class="btn btn-outline-success">Exportar CSV</a>
+</div>
+<div class="row g-3 mb-4">
+    <div class="col-md-6"><div class="card"><div class="card-body"><div class="small text-muted">Valor a costo (productos activos)</div><div class="fs-3 fw-bold">@valorCosto.ToString("C")</div></div></div></div>
+    <div class="col-md-6"><div class="card"><div class="card-body"><div class="small text-muted">Valor a precio de venta (sin IVA)</div><div class="fs-3 fw-bold">@valorVenta.ToString("C")</div></div></div></div>
+</div>
+<div class="table-responsive">
+    <table class="table table-sm table-hover align-middle">
+        <thead><tr><th>Código</th><th>Producto</th><th>Categoría</th><th class="text-end">Stock</th><th class="text-end">Costo</th><th class="text-end">Valor</th><th>Estado</th></tr></thead>
+        <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.Codigo</td>
+                <td>@p.Nombre</td>
+                <td>@p.Categoria?.Nombre</td>
+                <td class="text-end">@p.StockActual</td>
+                <td class="text-end">@p.PrecioCompra.ToString("C")</td>
+                <td class="text-end">@((p.StockActual * p.PrecioCompra).ToString("C"))</td>
+                <td>
+                    @if (!p.Activo) { <span class="badge bg-secondary">Inactivo</span> }
+                    else if (p.StockBajo) { <span class="badge bg-danger">Stock bajo</span> }
+                    else { <span class="badge bg-success">OK</span> }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

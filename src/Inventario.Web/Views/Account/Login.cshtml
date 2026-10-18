@@ -1,0 +1,43 @@
+@model LoginVm
+@{
+    ViewData["Title"] = "Iniciar sesión";
+}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h3 class="mb-3">Iniciar sesión</h3>
+                <form asp-action="Login" method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" autofocus />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" class="form-control" />
+                    </div>
+                    <div class="form-check mb-3">
+                        <input asp-for="Recordarme" class="form-check-input" />
+                        <label asp-for="Recordarme" class="form-check-label"></label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                </form>
+            </div>
+        </div>
+        <div class="card mt-3 border-info">
+            <div class="card-body small">
+                <strong>Usuarios de demostración</strong>
+                <table class="table table-sm mb-0 mt-2">
+                    <thead><tr><th>Rol</th><th>Correo</th><th>Contraseña</th></tr></thead>
+                    <tbody>
+                        <tr><td>Admin</td><td>admin@demo.com</td><td>Admin123!</td></tr>
+                        <tr><td>Vendedor</td><td>vendedor@demo.com</td><td>Vendedor123!</td></tr>
+                        <tr><td>Almacenista</td><td>almacen@demo.com</td><td>Almacen123!</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+@model Factura
+@using Inventario.Web.Services
+@{
+    ViewData["Title"] = "Factura " + Model.Numero;
+    var venta = Model.Venta!;
+}
+<div class="d-print-none mb-3">
+    <a asp-action="Index" class="btn btn-outline-secondary">Volver</a>
+    <button type="button" class="btn btn-primary" onclick="window.print()">Imprimir / guardar PDF</button>
+</div>
+
+<div class="card">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between flex-wrap">
+            <div>
+                <h3 class="mb-1">FACTURA @Model.Numero</h3>
+                <div class="text-muted">Fecha: @Model.Fecha.ToString("yyyy-MM-dd HH:mm")</div>
+            </div>
+            <div class="text-md-end">
+                <strong>Inventario Demo S.A.S.</strong><br />
+                NIT 900.000.000-0<br />
+                Bogotá, Colombia
+            </div>
+        </div>
+        <hr />
+        <p class="mb-1"><strong>Cliente:</strong> @(venta.Cliente?.Nombre ?? "Cliente general")</p>
+        @if (!string.IsNullOrWhiteSpace(venta.Cliente?.Documento))
+        {
+            <p class="mb-1"><strong>Documento:</strong> @venta.Cliente!.Documento</p>
+        }
+        <p class="mb-3"><strong>Atendido por:</strong> @venta.Usuario</p>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead><tr><th>Producto</th><th class="text-end">Cantidad</th><th class="text-end">Precio unitario</th><th class="text-end">Subtotal</th></tr></thead>
+                <tbody>
+                @foreach (var d in venta.Detalles)
+                {
+                    <tr>
+                        <td>@d.Producto?.Nombre</td>
+                        <td class="text-end">@d.Cantidad</td>
+                        <td class="text-end">@d.PrecioUnitario.ToString("C")</td>
+                        <td class="text-end">@d.Subtotal.ToString("C")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row justify-content-end">
+            <div class="col-md-5">
+                <table class="table table-sm">
+                    <tr><td>Subtotal</td><td class="text-end">@Model.Subtotal.ToString("C")</td></tr>
+                    <tr><td>IVA (@((InventarioService.TasaIva * 100).ToString("0"))%)</td><td class="text-end">@Model.Impuesto.ToString("C")</td></tr>
+                    <tr class="fw-bold fs-5"><td>Total</td><td class="text-end">@Model.Total.ToString("C")</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,67 @@
+@model MovimientosVm
+@{
+    ViewData["Title"] = "Historial de movimientos";
+}
+<h2 class="mb-3">Historial de movimientos del inventario</h2>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-3">
+        <select asp-for="ProductoId" asp-items="Model.Productos" class="form-select">
+            <option value="">Todos los productos</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select asp-for="Tipo" asp-items="Html.GetEnumSelectList<TipoMovimiento>()" class="form-select">
+            <option value="">Todos los tipos</option>
+        </select>
+    </div>
+    <div class="col-md-2"><input asp-for="Desde" type="date" class="form-control" /></div>
+    <div class="col-md-2"><input asp-for="Hasta" type="date" class="form-control" /></div>
+    <div class="col-md-1"><button class="btn btn-outline-secondary w-100">Filtrar</button></div>
+    <div class="col-md-2"><a asp-action="Index" class="btn btn-link">Limpiar</a></div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-sm table-hover align-middle">
+        <thead>
+            <tr><th>Fecha</th><th>Producto</th><th>Tipo</th><th class="text-end">Cantidad</th><th class="text-end">Stock anterior</th><th class="text-end">Stock nuevo</th><th>Referencia</th><th>Usuario</th></tr>
+        </thead>
+        <tbody>
+        @foreach (var m in Model.Items)
+        {
+            <tr>
+                <td>@m.Fecha.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@m.Producto?.Codigo - @m.Producto?.Nombre</td>
+                <td>
+                    @if (m.Tipo == TipoMovimiento.Entrada) { <span class="badge bg-success">Entrada</span> }
+                    else if (m.Tipo == TipoMovimiento.Salida) { <span class="badge bg-danger">Salida</span> }
+                    else { <span class="badge bg-warning text-dark">Ajuste</span> }
+                </td>
+                <td class="text-end">@(m.Cantidad > 0 ? "+" + m.Cantidad : m.Cantidad.ToString())</td>
+                <td class="text-end">@m.StockAnterior</td>
+                <td class="text-end">@m.StockNuevo</td>
+                <td>
+                    @if (m.CompraId != null)
+                    {
+                        <a asp-controller="Compras" asp-action="Details" asp-route-id="@m.CompraId">Compra #@m.CompraId</a>
+                    }
+                    else if (m.VentaId != null)
+                    {
+                        <span>Venta #@m.VentaId</span>
+                    }
+                    else
+                    {
+                        <span>@m.Motivo</span>
+                    }
+                </td>
+                <td>@m.Usuario</td>
+            </tr>
+        }
+        @if (!Model.Items.Any())
+        {
+            <tr><td colspan="8" class="text-center text-muted py-4">No hay movimientos para los filtros seleccionados.</td></tr>
+        }
+        </tbody>
+    </table>
+</div>
+<p class="text-muted small">Se muestran los 300 movimientos más recientes.</p>
